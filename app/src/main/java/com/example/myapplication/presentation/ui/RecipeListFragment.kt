@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.TextField
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
@@ -23,10 +25,18 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
+                val recipes = viewModel.recipes.value
                 val query = viewModel.query.value
 
                 Column {
                     TextField(value = query, onValueChange = viewModel::onQueryChanged)
+                    LazyColumn {
+                        itemsIndexed(
+                            items = recipes
+                        ) { index, recipe ->
+                            RecipeCard(recipe = recipe, onclick = {})
+                        }
+                    }
                 }
             }
         }
