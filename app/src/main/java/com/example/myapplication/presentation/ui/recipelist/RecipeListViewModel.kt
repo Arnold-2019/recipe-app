@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.ui
+package com.example.myapplication.presentation.ui.recipelist
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -19,17 +19,18 @@ class RecipeListViewModel @Inject constructor(
 
     val recipes: MutableState<List<Recipe>> = mutableStateOf(listOf())
     val query = mutableStateOf("chicken")
+    val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
 
     init {
-        newSearch(query = query.value)
+        newSearch()
     }
 
-    fun newSearch(query: String){
+    fun newSearch(){
         viewModelScope.launch {
             val result = repository.search(
                 token = token,
                 page = 1,
-                query = query
+                query = query.value
             )
             recipes.value = result
         }
@@ -37,5 +38,11 @@ class RecipeListViewModel @Inject constructor(
 
     fun onQueryChanged(query: String) {
         this.query.value = query
+    }
+
+    fun onSelectedCategoryChanged(category: String) {
+        val newCategory = getFoodCategory(category)
+        selectedCategory.value = newCategory
+        onQueryChanged(category)
     }
 }
